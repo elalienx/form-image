@@ -8,7 +8,7 @@ export default function NavigationBar() {
       {" - "}
       <Link to="/formulary">Upload image</Link>
       {" - "}
-      <Link to="/login">Gallery</Link>
+      <Link to="/gallery">Gallery</Link>
     </nav>
   );
 }

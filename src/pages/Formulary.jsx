@@ -10,7 +10,7 @@ export default function Formulary() {
   const [form, setForm] = useState({ title: "", image: "" });
 
   // Properties
-  const END_POINT = "http://localhost:8000";
+  const END_POINT = "http://localhost:8000/upload";
   const METHOD = "POST";
   const HEADERS = {}; // add any security if needed
 
@@ -39,24 +39,27 @@ export default function Formulary() {
   }
 
   async function onImageChoosen(event) {
+    console.log("onImageChoosen()");
+
     const imageAsFile = event.currentTarget.files[0];
-    console.log("Image as a file: (File)");
+    const imageAsBase64Original = await readFile(imageAsFile);
+    const imageAsBlob = await resizeImage(imageAsBase64Original, 500, 500);
+    const imageToBase64Resized = await readFile(imageAsBlob);
+
+    console.log("1. Image as a File:");
     console.log(imageAsFile);
 
-    const imageAsImage = await readFile(imageAsFile);
-    console.log("Image as a file: (Image)");
-    console.log(imageAsImage);
+    console.log("2. Image as a the original base64 string:");
+    console.log(imageAsBase64Original);
 
-    const imageAsBlob = await resizeImage(imageAsFile, 500, 500);
-    console.log("Image as a file: (Blob)");
+    console.log("3. Image as a Blob");
     console.log(imageAsBlob);
 
-    const imageToBase64 = await readFile(imageAsBlob);
-    console.log("Image as a string: (Base 64)");
-    console.log(imageToBase64);
+    console.log("4. Image as a the resized base64 string:");
+    console.log(imageToBase64Resized);
 
     // pass here any of the image variables created above
-    setForm({ ...form, image: imageToBase64 });
+    setForm({ ...form, image: imageToBase64Resized });
   }
 
   return (
@@ -66,18 +69,19 @@ export default function Formulary() {
         <input
           type="text"
           placeholder="Title ex: Car, Mountain"
+          required
           value={form.title}
           onChange={(event) => setForm({ ...form, title: event.target.value })}
         />
         <br />
-        <label>
-          <input
-            type="file"
-            accept="image/png, image/jpeg"
-            onChange={(event) => onImageChoosen(event)}
-          />
-          <img src={form.image} />
-        </label>
+        <input
+          type="file"
+          accept="image/png, image/jpeg"
+          required
+          onChange={(event) => onImageChoosen(event)}
+        />
+        <br />
+        <img src={form.image} />
         <br />
         <button>Upload</button>
       </form>
